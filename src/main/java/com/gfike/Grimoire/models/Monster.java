@@ -1,6 +1,7 @@
 package com.gfike.Grimoire.models;
 
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,6 +30,18 @@ public class Monster {
 
     @NotNull
     private boolean fly;
+
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    @Column(name="count")
+    private int count;
 
     public Monster(String name, boolean biped, boolean quadped, boolean swim, boolean fly) {
         this.name = name;

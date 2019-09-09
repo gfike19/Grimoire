@@ -1,9 +1,7 @@
 package com.gfike.Grimoire.controllers;
 
 import com.gfike.Grimoire.models.Monster;
-import com.gfike.Grimoire.models.Sighting;
 import com.gfike.Grimoire.models.data.MonsterDao;
-import com.gfike.Grimoire.models.data.SightingDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,19 +9,20 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 
 @Controller
 public class MonsterController {
 
     @Autowired
     MonsterDao monsterDao;
-
-    @Autowired
-    SightingDao sightDao;
 
     @RequestMapping(value = "/",method = RequestMethod.GET)
     public String index(){
@@ -49,20 +48,29 @@ public class MonsterController {
     }
 
     @RequestMapping(value = "/addSighting",method = RequestMethod.GET)
-    public String addSightingGet(Model model){
-        model.addAttribute(new Sighting());
-        ArrayList<Sighting> sights = (ArrayList<Sighting>) sightDao.findAll();
-        model.addAttribute("sights", sights);
+    public String addSightingGet(Model model, HttpSession session){
+        if(session.getAttribute("msg") != null){
+            String msg = (String) session.getAttribute("msg");
+            model.addAttribute("msg", msg);
+        }
+        ArrayList<Monster> allMons = (ArrayList<Monster>) monsterDao.findAll();
+        model.addAttribute("allMons", allMons);
         return "addSighting";
     }
 
     @RequestMapping(value = "/addSighting",method = RequestMethod.POST)
-    public String addSightingPost(@ModelAttribute @Valid Sighting newSighting,
-                              Errors errors, Model model){
-        if (errors.hasErrors()) {
-            return "addSighting";
+    public String addSightingPost(Model model, @RequestParam List<String> newCount,
+                                  HttpSession session){
+        ArrayList<Monster> allMons = (ArrayList<Monster>) monsterDao.findAll();
+
+        for(int i = 0; i < newCount.size(); i++){
+            int count = Integer.parseInt(newCount.get(i));
+            if (count > 0) {
+                Monster m = allMons.get(i);
+                m.setCount(count);
+                monsterDao.save(m);
+            }
         }
-        sightDao.save(newSighting);
         return "redirect:addSighting";
     }
 

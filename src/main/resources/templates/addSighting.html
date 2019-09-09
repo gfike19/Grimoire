@@ -7,21 +7,22 @@
 <div th:replace="template :: navigation"></div>
 
 <body>
-    <form method="post" th:object="${monster}">
+    <form method="post">
         <table>
             <tr>
                 <td>Name</td> <td>Current Count</td> <td>Add Sighting</td>
             </tr>
             <tr th:each="mons: ${allMons}">
-                <tr th:each="sight : ${sights}">
-                </tr>
-                <td th:text="${mons.name}" th:value="${mons.id}" th:field="*{monsId}"></td>
-                <td th:text="${sight.count}"></td>
-                <td><input class="form-control" th:field="*{count}"/></td>
+                <td th:text="${mons.name}"></td>
+                <td th:text="${mons.count}"></td>
+                <td><input type="number" name="newCount" id="newCount" value="0"/>
+                </td>
             </tr>
         </table>
+        <input type="submit" value="Add Sighting/s"/>
     </form>
 
 </body>
 
+<footer th:replace="template :: footer"></footer>
 </html>
